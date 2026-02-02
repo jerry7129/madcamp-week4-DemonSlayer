@@ -27,8 +27,7 @@ public class DoppelgangerAI : MonoBehaviour
         if (!rb) rb = GetComponent<Rigidbody2D>();
         if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // Set Color in Awake so EnemyHealth.Start() catches this modified color as 'original'
-        if (spriteRenderer) spriteRenderer.color = new Color(0.3f, 0.3f, 0.5f, 1f); 
+ 
 
         // Fix Sticking: Apply Zero Friction
         PhysicsMaterial2D slipperyMat = new PhysicsMaterial2D("SlipperyEnemy");
