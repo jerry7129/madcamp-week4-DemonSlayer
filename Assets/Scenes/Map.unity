@@ -18388,7 +18388,7 @@ GameObject:
   - component: {fileID: 1816326211}
   m_Layer: 0
   m_Name: MainCamera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -18508,8 +18508,7 @@ Transform:
   m_LocalPosition: {x: -21.575134, y: 19.037682, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2008748127}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1816326211
@@ -18981,6 +18980,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2008748127}
   - component: {fileID: 2008748128}
+  - component: {fileID: 2008748129}
   m_Layer: 0
   m_Name: First
   m_TagString: Untagged
@@ -18997,11 +18997,11 @@ Transform:
   m_GameObject: {fileID: 2008748126}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.0861, y: 15.1707, z: 30}
+  m_LocalPosition: {x: -15.489035, y: 34.20838, z: 20}
   m_LocalScale: {x: 2.7753, y: 2.7753, z: 2.7753}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1816326210}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2008748128
 SpriteRenderer:
@@ -19062,6 +19062,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2008748129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2008748126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ca4c5b0c049950498f690a02efdcced, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ParallaxLayer
+  parallaxEffect: {x: 0.5, y: 0.5}
+  infiniteHorizontal: 1
+  infiniteVertical: 1
 --- !u!1 &2031331095
 GameObject:
   m_ObjectHideFlags: 0
@@ -19278,11 +19293,11 @@ PrefabInstance:
       objectReference: {fileID: 278478210}
     - target: {fileID: 7095001270329031577, guid: 84113de1f591d034a817de8f4d4f1b62, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 64.8
+      value: 126.6
       objectReference: {fileID: 0}
     - target: {fileID: 7095001270329031577, guid: 84113de1f591d034a817de8f4d4f1b62, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 41
+      value: 48.1
       objectReference: {fileID: 0}
     - target: {fileID: 7095001270329031577, guid: 84113de1f591d034a817de8f4d4f1b62, type: 3}
       propertyPath: m_LocalPosition.z
@@ -19494,6 +19509,7 @@ SceneRoots:
   - {fileID: 1038224880}
   - {fileID: 1848210878}
   - {fileID: 1816326210}
+  - {fileID: 2008748127}
   - {fileID: 1932782869922063813}
   - {fileID: 1064605996}
   - {fileID: 772316114}
