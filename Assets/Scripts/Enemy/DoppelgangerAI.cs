@@ -8,27 +8,48 @@ public class DoppelgangerAI : MonoBehaviour
     public float attackRange = 1.0f;
     public float attackCooldown = 2.0f;
 
+    [Header("Movement Physics")]
+    public float maxSlopeAngle = 60f;
+    [Range(0f, 100f)] public float maxAcceleration = 35f;
+    [Range(0f, 100f)] public float maxAirAcceleration = 20f;
+    [Range(0f, 5f)] public float downwardMovementMultiplier = 3f;
+    [Range(0f, 5f)] public float upwardMovementMultiplier = 1.7f;
+    public float jumpHeight = 3.0f;
+
     [Header("References")]
     public Transform target;
     public Animator animator;
     public Rigidbody2D rb;
     public SpriteRenderer spriteRenderer;
     public GameObject attackHitbox; // Child NormalAttackCollider
+    public Transform groundCheck;
+    public LayerMask groundLayer;
 
+    // State
     private bool isDead = false;
     private bool isPaused = false; 
     private bool isAttacking = false;
     private float lastAttackTime = -99f;
+    
+    // Physics State
+    private bool isGrounded;
+    private float slopeAngle;
+    private Vector2 slopeNormalPerp;
+    private bool isOnSlope;
+    private RaycastHit2D slopeHit;
+    private float defaultGravityScale;
+    private float moveInputX; // Controlled by AI Logic
 
     void Awake()
     {
-        // Init components early
         if (!animator) animator = GetComponent<Animator>();
         if (!rb) rb = GetComponent<Rigidbody2D>();
-        if (rb) rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
+        if (rb) 
+        {
+            rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
+            defaultGravityScale = rb.gravityScale;
+        }
         if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer>();
-
- 
 
         // Fix Sticking: Apply Zero Friction
         PhysicsMaterial2D slipperyMat = new PhysicsMaterial2D("SlipperyEnemy");
@@ -41,24 +62,18 @@ public class DoppelgangerAI : MonoBehaviour
 
     void Start()
     {
-        // ... (existing Start) ...
-        // Auto-find player if not set
         if (target == null)
         {
             GameObject player = GameObject.FindWithTag("Player");
             if (player) target = player.transform;
             else
             {
-                // Fallback name
                 GameObject p = GameObject.Find("Zenitsu");
                 if (p) target = p.transform;
             }
         }
 
-        // 1. Prevent falling over (Lying down bug) - But we will MANUALLY rotate to gravity
         if (rb) rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        
-        // Ensure Hitbox starts OFF
         if (attackHitbox && attackHitbox.activeSelf) attackHitbox.SetActive(false);
     }
 
@@ -70,17 +85,12 @@ public class DoppelgangerAI : MonoBehaviour
     System.Collections.IEnumerator PauseRoutine(float duration)
     {
         isPaused = true;
-        
-        // Optional: Reset velocity here too, or let GravityManager do it
         if(rb) rb.linearVelocity = Vector2.zero; 
+        moveInputX = 0;
         if(animator) animator.SetBool("isRunning", false);
-
         yield return new WaitForSeconds(duration);
         isPaused = false;
     }
-
-    // Old Update method removed
-
 
     void AlignToGravity()
     {
@@ -90,116 +100,205 @@ public class DoppelgangerAI : MonoBehaviour
         Vector2 targetUp = -g.normalized;
         float targetAngle = Mathf.Atan2(targetUp.y, targetUp.x) * Mathf.Rad2Deg - 90f;
         Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
-        
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
     }
 
-    [Header("Movement Settings")]
-    public float jumpHeight = 3.0f;
-    public Transform groundCheck;
-    public LayerMask groundLayer;
-    private bool isGrounded;
-
-    void ChasePlayer()
-    {
-        // Direction to target
-        Vector2 dirToTarget = (target.position - transform.position).normalized;
-        
-        // Convert to Local Space based on our "Up" (which is aligned to gravity)
-        Vector2 localRight = transform.right; 
-        float dot = Vector2.Dot(dirToTarget, localRight);
-
-        // Calculate move direction (-1 or 1)
-        float moveDir = (dot > 0) ? 1f : -1f;
-
-        // Apply Velocity Logic corrected for Gravity Drift
-        Vector2 gravityDir = Physics2D.gravity.normalized;
-        if (gravityDir == Vector2.zero) gravityDir = Vector2.down; 
-        
-        Vector2 groundTangent = new Vector2(-gravityDir.y, gravityDir.x); 
-        Vector2 currentVel = rb.linearVelocity;
-        float verticalSpeed = Vector2.Dot(currentVel, gravityDir); 
-
-        Vector2 desiredDir = (localRight * moveDir).normalized;
-        
-        if (Vector2.Dot(desiredDir, groundTangent) < 0) groundTangent = -groundTangent;
-
-        Vector2 horizontalVel = groundTangent * moveSpeed;
-        
-        // Jump Logic (If target is higher & we are grounded)
-        // Check height difference relative to Gravity Up
-        float heightDiff = Vector2.Dot(target.position - transform.position, -gravityDir);
-        
-        if (heightDiff > 1.5f && isGrounded)
-        {
-            // Calculate Jump Velocity: v = sqrt(2gh)
-            float gMag = Physics2D.gravity.magnitude * rb.gravityScale;
-            float jumpVel = Mathf.Sqrt(2 * gMag * jumpHeight);
-            
-            // Apply Jump (Replace vertical speed)
-            verticalSpeed = -jumpVel; // -gravityDir is "Up", so negative gravityDir is Up velocity? 
-            // Wait, gravityDir is DOWN. So Up velocity is OPPOSITE to gravityDir.
-            // verticalSpeed is PROJECTION on gravityDir.
-            // If we look at line 169: rb.velocity = horizontal + (gravityDir * verticalSpeed)
-            // if verticalSpeed is positive, we move DOWN.
-            // We want to move UP, so verticalSpeed should be NEGATIVE of JumpVel.
-            verticalSpeed = -jumpVel; 
-            
-            isGrounded = false; // Prevent double jump immediately
-            if(animator) animator.SetBool("isGrounded", false);
-        }
-
-        // 5. Combine
-        rb.linearVelocity = horizontalVel + (gravityDir * verticalSpeed);
-
-        // Animate
-        if(animator) 
-        {
-            animator.SetBool("isRunning", true);
-            animator.SetBool("isGrounded", isGrounded);
-        }
-
-        // Face Target (Visual Flip)
-        if (moveDir > 0) transform.localScale = Vector3.one; 
-        else transform.localScale = new Vector3(-1, 1, 1);
-    }
-    
     void Update()
     {
-        if (isDead) return;
-        if (isPaused) return; 
+        if (isDead || isPaused) return;
         
         if (target == null)
         {
-             GameObject player = GameObject.FindWithTag("Player");
+            GameObject player = GameObject.FindWithTag("Player");
             if (player) target = player.transform;
             return;
         }
 
         AlignToGravity();
-        CheckGrounded(); // Update ground state
 
+        // --- AI LOGIC (Decision Making) ---
         float dist = Vector3.Distance(transform.position, target.position);
+        
+        // Attack Logic
         if (dist <= attackRange)
         {
+            moveInputX = 0; // Stop moving to attack
             if (Time.time >= lastAttackTime + attackCooldown && !isAttacking)
             {
                 StartCoroutine(AttackRoutine());
             }
-            else
-            {
-                // Wait/Cooldown state
-                if(animator) animator.SetBool("isRunning", false);
-                rb.linearVelocity = Vector2.zero; // Stop moving
-            }
         }
+        // Chase Logic
         else if (dist <= detectRange && !isAttacking)
         {
-            ChasePlayer();
+            // Determine Direction
+            Vector2 dirToTarget = (target.position - transform.position).normalized;
+            Vector2 localRight = transform.right; 
+            float dot = Vector2.Dot(dirToTarget, localRight);
+            moveInputX = (dot > 0) ? 1f : -1f;
+
+            // Visual Flip
+            if (moveInputX > 0) transform.localScale = Vector3.one; 
+            else transform.localScale = new Vector3(-1, 1, 1);
         }
         else
         {
-            if(animator) animator.SetBool("isRunning", false);
+            moveInputX = 0; // Idle
+        }
+
+        // Animation
+        if (animator)
+        {
+            animator.SetBool("isRunning", Mathf.Abs(moveInputX) > 0.1f);
+            animator.SetBool("isGrounded", isGrounded);
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (isDead || isPaused) return;
+
+        CheckGrounded();
+        Move();
+    }
+
+    void CheckGrounded()
+    {
+        isGrounded = false;
+        slopeAngle = 0f;
+        slopeHit = new RaycastHit2D();
+
+        if (groundCheck == null) return;
+
+        // 1. Circle Check
+        bool circleHit = Physics2D.OverlapCircle(groundCheck.position, 0.4f, groundLayer);
+        if (circleHit) isGrounded = true;
+
+        // 2. Slope Raycast
+        Vector2 gravityDown = -transform.up; 
+        if (Physics2D.gravity != Vector2.zero) gravityDown = Physics2D.gravity.normalized;
+
+        RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, gravityDown, 1.0f, groundLayer);
+        
+        if (hit)
+        {
+            float angle = Vector2.Angle(hit.normal, -gravityDown);
+            bool isStairs = hit.collider.CompareTag("Stairs");
+
+            if (angle <= maxSlopeAngle || isStairs)
+            {
+                 float maxDist = isStairs ? 0.8f : 0.5f;
+                 if (hit.distance < maxDist) 
+                 {
+                     isGrounded = true;
+                     slopeAngle = angle;
+                     slopeHit = hit;
+                     slopeNormalPerp = Vector2.Perpendicular(hit.normal).normalized;
+                 }
+            }
+        }
+    }
+
+    void Move()
+    {
+        isOnSlope = isGrounded && slopeAngle > 0;
+
+        Vector2 playerRight = transform.right; 
+        
+        // 1. Calculate Current Local Velocity
+        Vector2 currentVelocity = rb.linearVelocity;
+        float currentSpeedX = Vector2.Dot(currentVelocity, playerRight);
+        
+        // 2. Calculate Target Speed & Acceleration
+        float targetSpeedX = moveInputX * moveSpeed;
+        float acceleration = isGrounded ? maxAcceleration : maxAirAcceleration;
+        float maxSpeedChange = acceleration * Time.deltaTime;
+        
+        float newSpeedX = Mathf.MoveTowards(currentSpeedX, targetSpeedX, maxSpeedChange);
+        
+        // STAIRS/WALL CHECK (Forward Probe like Player)
+        if (isGrounded && Mathf.Abs(moveInputX) > 0.1f)
+        {
+            Vector2 forwardDir = (playerRight * Mathf.Sign(moveInputX));
+            Vector2 origin = (Vector2)transform.position + (Vector2.up * 0.2f); 
+            RaycastHit2D wallHit = Physics2D.Raycast(origin, forwardDir, 0.6f, groundLayer);
+            if (wallHit && wallHit.collider.CompareTag("Stairs"))
+            {
+                isOnSlope = true;
+                slopeNormalPerp = Vector2.Perpendicular(wallHit.normal).normalized;
+                if (slopeNormalPerp.y < 0) slopeNormalPerp = -slopeNormalPerp; // Force Up
+            }
+        }
+
+        // 3. Slope Movement
+        if (isOnSlope)
+        {
+            // Snap to zero if stopping
+            if (Mathf.Abs(targetSpeedX) < 0.01f && Mathf.Abs(newSpeedX) < 0.01f)
+            {
+                 rb.linearVelocity = Vector2.zero;
+                 rb.gravityScale = 0f;
+                 return;
+            }
+            
+            rb.gravityScale = defaultGravityScale; 
+
+            Vector2 direction = (playerRight * Mathf.Sign(newSpeedX));
+            if (newSpeedX == 0) direction = playerRight;
+
+            if (Vector2.Dot(direction, slopeNormalPerp) < 0)
+            {
+                slopeNormalPerp = -slopeNormalPerp;
+            }
+            
+            float slopeFactor = 1f;
+            float horizontalComponent = Mathf.Abs(Vector2.Dot(slopeNormalPerp, playerRight));
+            if (horizontalComponent > 0.1f) slopeFactor = 1f / horizontalComponent;
+            slopeFactor = Mathf.Clamp(slopeFactor, 1f, 3f);
+
+            Vector2 slopeVelocity = slopeNormalPerp * Mathf.Abs(newSpeedX) * slopeFactor;
+            rb.linearVelocity = slopeVelocity;
+        }
+        else
+        {
+            // 4. Flat/Air Movement
+            rb.gravityScale = defaultGravityScale;
+            
+            // Variable Jump Gravity (If needed logic later, for now just multipliers)
+            Vector2 gravityDir = Physics2D.gravity.normalized;
+            if (gravityDir == Vector2.zero) gravityDir = Vector2.down;
+            float verticalSpeed = Vector2.Dot(rb.linearVelocity, gravityDir);
+
+            if (verticalSpeed < 0) // Moving Up (since gravityDir is down)
+                rb.gravityScale = defaultGravityScale * upwardMovementMultiplier;
+            else if (verticalSpeed > 0) // Falling Down
+                rb.gravityScale = defaultGravityScale * downwardMovementMultiplier;
+
+            // Apply Velocity
+            Vector2 finalVelocity = rb.linearVelocity;
+            
+            // Remove old x component and add new x component
+            // We use vector rejection/projection math or just reconstruct
+            Vector2 verticalVelocity = finalVelocity - (playerRight * Vector2.Dot(finalVelocity, playerRight));
+            rb.linearVelocity = verticalVelocity + (playerRight * newSpeedX);
+        }
+
+        // Jump Logic (Simple AI Jump)
+        // Check if we need to jump to reach target (target is higher)
+        Vector2 gDir = Physics2D.gravity.normalized;
+        if(gDir == Vector2.zero) gDir = Vector2.down;
+        
+        float relativeHeight = Vector2.Dot(target.position - transform.position, -gDir);
+        
+        if (isGrounded && relativeHeight > 1.5f && Mathf.Abs(moveInputX) > 0.1f)
+        {
+             // Jump!
+             float gMag = Physics2D.gravity.magnitude * defaultGravityScale;
+             float jumpVel = Mathf.Sqrt(2 * gMag * jumpHeight); // v = sqrt(2gh)
+             
+             // Add upward velocity (Opposite to gravity)
+             rb.linearVelocity += (-gDir * jumpVel);
+             isGrounded = false;
         }
     }
 
@@ -208,51 +307,33 @@ public class DoppelgangerAI : MonoBehaviour
         isAttacking = true;
         lastAttackTime = Time.time;
         
-        // Stop Movement
         rb.linearVelocity = Vector2.zero;
         if(animator) animator.SetBool("isRunning", false);
 
-        // Face Target before attack (Account for rotation/gravity using Dot Product)
+        // Face Target
         Vector2 dirToTarget = (target.position - transform.position).normalized;
         float dot = Vector2.Dot(dirToTarget, transform.right);
-        
-        // If dot > 0, target is to our "Right" (Local). If dot < 0, to our "Left".
-        // Since Scale.x = 1 is facing Right, and -1 is Left:
         if (dot > 0) transform.localScale = Vector3.one;
         else transform.localScale = new Vector3(-1, 1, 1);
 
-        // Visuals
         if(animator) animator.SetTrigger("Attack");
 
-        // Wait for windup (Optional delay, using 0.1s similar to Player)
         yield return new WaitForSeconds(0.1f);
 
-        // Hitbox ON
         if(attackHitbox) 
         {
-            // Explicitly Reset Damage History
             DamageDealer dd = attackHitbox.GetComponent<DamageDealer>();
             if(dd) dd.BeginAttack();
-            
             attackHitbox.SetActive(true);
         }
 
-        yield return new WaitForSeconds(0.3f); // Attack duration
+        yield return new WaitForSeconds(0.3f); 
 
-        // Hitbox OFF
         if(attackHitbox) attackHitbox.SetActive(false);
 
         isAttacking = false;
     }
-
-    void CheckGrounded()
-    {
-        if (groundCheck != null)
-        {
-            isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.4f, groundLayer);
-        }
-    }
-
+    
     void OnDrawGizmos()
     {
         if (groundCheck != null)
