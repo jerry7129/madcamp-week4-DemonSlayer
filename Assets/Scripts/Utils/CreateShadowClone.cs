@@ -16,10 +16,10 @@ public class CreateShadowClone : MonoBehaviour
         }
 
         // 2. Load Prefab
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemy_Demon/Kaigaku.prefab");
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemy/Kaigaku.prefab");
         if (prefab == null) 
         {
-            Debug.LogError("Kaigaku.prefab not found at Assets/Prefabs/Enemy_Demon/Kaigaku.prefab!");
+            Debug.LogError("Kaigaku.prefab not found at Assets/Prefabs/Enemy/Kaigaku.prefab!");
             return;
         }
 

@@ -17,11 +17,17 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         
-        // Auto-Link UI if not linked
-        var uiManager = FindAnyObjectByType<GameUIManager>();
-        if (uiManager != null)
+        // Auto-Link UI if not linked (and only if I am the Player)
+        // Auto-Link UI if not linked (and only if I am the Player)
+        if (CompareTag("Player"))
         {
-            OnHealthChanged.AddListener(uiManager.UpdateHealthBar);
+            var uiManager = FindAnyObjectByType<GameUIManager>();
+            if (uiManager != null)
+            {
+                // Force Update immediately
+                uiManager.UpdateHealthBar(1f);
+                OnHealthChanged.AddListener(uiManager.UpdateHealthBar);
+            }
         }
 
         OnHealthChanged?.Invoke(1f);

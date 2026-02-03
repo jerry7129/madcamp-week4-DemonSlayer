@@ -60,7 +60,11 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        if(rb) rb.sleepMode = RigidbodySleepMode2D.NeverSleep; // Prevent sleeping for reliable hit detection
+        if(rb) 
+        {
+            rb.sleepMode = RigidbodySleepMode2D.NeverSleep; // Prevent sleeping for reliable hit detection
+            defaultGravityScale = rb.gravityScale; // Cache initial gravity
+        }
         animator = GetComponent<Animator>(); // Auto-get parameter
         
         // 1. Fix Rotation (Prevent Toppling)
@@ -256,6 +260,20 @@ public class PlayerController : MonoBehaviour
             else if (moveInput.x < 0) transform.localScale = new Vector3(-1, 1, 1);
         }
 
+        // 5. Cooldown Management
+        if (!canDash && !isCharging && !isDashing) // Only recover when not doing the move
+        {
+            currentCooldownTimer += Time.deltaTime;
+            // Removed spammy log, but if needed: 
+            // Debug.Log($"Cooldown: {currentCooldownTimer}/{dashCooldown}"); 
+            
+            if (currentCooldownTimer >= dashCooldown)
+            {
+                canDash = true;
+                currentCooldownTimer = 0f;
+            }
+        }
+
         // 4. Update Animation (ALWAYS RUNS)
         if (animator != null)
         {
@@ -317,42 +335,213 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    [Header("Movement Settings")]
+    public float maxSlopeAngle = 60f;
+    [Range(0f, 100f)] public float maxAcceleration = 35f; // New: Acceleration
+    [Range(0f, 100f)] public float maxAirAcceleration = 20f; // New: Air Control
+    [Range(0f, 5f)] public float downwardMovementMultiplier = 3f; // New: Heavy fall
+    [Range(0f, 5f)] public float upwardMovementMultiplier = 1.7f; // New: Low jump gravity
+    
+    private Vector2 slopeNormalPerp;
+    private bool isOnSlope;
+    private float slopeLockoutTimer = 0f;
+
     void CheckGrounded()
     {
+        bool wasGrounded = isGrounded;
+        isGrounded = false;
+        slopeAngle = 0f;
+        slopeHit = new RaycastHit2D();
+
+        // 1. Standard Circle Check (Flat ground)
         if (groundCheck != null)
         {
-            // Increased radius (0.2 -> 0.4) to ensure it hits ground even if pivot is slightly high
-            isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.4f, groundLayer);
+            // Debug Visualization
+            // Debug.DrawWireSphere is not valid. Use Gizmos in OnDrawGizmos.
+            
+            bool circleHit = Physics2D.OverlapCircle(groundCheck.position, 0.4f, groundLayer);
+            if (circleHit) 
+            {
+                isGrounded = true;
+            }
         }
-    }
 
-    void OnDrawGizmos()
-    {
-        if (groundCheck != null)
+        // 2. Slope Raycast Check (If strictly needed or to override Air state on slopes)
+        // Always cast ray to get slope info
+        Vector2 gravityDown = -transform.up; 
+        if (Physics2D.gravity != Vector2.zero) gravityDown = Physics2D.gravity.normalized;
+
+        Debug.DrawRay(groundCheck.position, gravityDown * 1.0f, Color.blue); // Visualize Ray
+        RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, gravityDown, 1.0f, groundLayer); // Increased distance to 1.0f
+        
+        if (hit)
         {
-            Gizmos.color = isGrounded ? Color.green : Color.red;
-            Gizmos.DrawWireSphere(groundCheck.position, 0.4f);
+            float angle = Vector2.Angle(hit.normal, -gravityDown);
+            
+            // Check for Stairs Tag (Allow explicit stair climbing regardless of angle)
+            bool isStairs = hit.collider.CompareTag("Stairs");
+
+            if (angle <= maxSlopeAngle || isStairs)
+            {
+                 // If we are close enough to the hit point, consider grounded even if Circle missed
+                 // For stairs, we might want to be more lenient with distance
+                 float maxDist = isStairs ? 0.8f : 0.5f;
+                 
+                 if (hit.distance < maxDist) 
+                 {
+                     isGrounded = true;
+                     slopeAngle = angle;
+                     slopeHit = hit;
+                     slopeNormalPerp = Vector2.Perpendicular(hit.normal).normalized;
+                 }
+            }
         }
     }
-
-
+    
+    // Cached slope data
+    private float slopeAngle;
+    private RaycastHit2D slopeHit;
 
     void Move()
     {
+        // Decrease Lockout
+        if (slopeLockoutTimer > 0) 
+        {
+            slopeLockoutTimer -= Time.deltaTime;
+            isOnSlope = false;
+        }
+        else
+        {
+             // Determine if we are effectively on a slope
+             isOnSlope = isGrounded && slopeAngle > 0;
+        }
+
         Vector2 playerRight = transform.right; 
         Vector2 playerUp = transform.up;       
 
+        // 1. Calculate Current Local Velocity
         Vector2 currentVelocity = rb.linearVelocity;
+        float currentSpeedX = Vector2.Dot(currentVelocity, playerRight);
+        
+        // 2. Calculate Target Speed & Acceleration
+        float targetSpeedX = moveInput.x * moveSpeed;
+        float acceleration = isGrounded ? maxAcceleration : maxAirAcceleration;
+        float maxSpeedChange = acceleration * Time.deltaTime;
+        
+        float newSpeedX = Mathf.MoveTowards(currentSpeedX, targetSpeedX, maxSpeedChange);
 
+        // STAIRS/WALL CHECK (Forward Probe)
+        // If we are grounded and moving, check for stairs in front
+        if (isGrounded && Mathf.Abs(moveInput.x) > 0.1f)
+        {
+            Vector2 forwardDir = (playerRight * Mathf.Sign(moveInput.x));
+            // Cast from slightly above feet to hit the step face
+            Vector2 origin = (Vector2)transform.position + (Vector2.up * 0.2f); 
+            
+            // Debug
+            Debug.DrawRay(origin, forwardDir * 0.6f, Color.yellow);
+            
+            RaycastHit2D wallHit = Physics2D.Raycast(origin, forwardDir, 0.6f, groundLayer);
+            if (wallHit && wallHit.collider.CompareTag("Stairs"))
+            {
+                // We hit a stair step face! Treat as steep slope.
+                isOnSlope = true;
+                slopeNormalPerp = Vector2.Perpendicular(wallHit.normal).normalized;
+                
+                // IMPORTANT: If facing wall (normal opposes dir), Perpendicular might be Down-ish or Up-ish.
+                // Wall Normal is (-1, 0). Perp is (0, -1) or (0, 1).
+                // We want UP.
+                // Let's force alignment upward for stairs
+                if (slopeNormalPerp.y < 0) slopeNormalPerp = -slopeNormalPerp;
+            }
+        }
+        
+        // 3. Slope Movement
+        if (isOnSlope && slopeLockoutTimer <= 0)
+        {
+             // If we are effectively "stopped" (very low speed input and actual speed), snap to 0
+             if (Mathf.Abs(targetSpeedX) < 0.01f && Mathf.Abs(newSpeedX) < 0.01f)
+             {
+                 rb.linearVelocity = Vector2.zero;
+                 rb.gravityScale = 0f; // Disable gravity to stick
+                 return;
+             }
+             
+             rb.gravityScale = defaultGravityScale; // Ensure gravity is on when moving
+
+             // Flip tangent to match desired direction (based on newSpeedX sign)
+             // Use newSpeedX for direction to preserve momentum direction
+             Vector2 direction = (playerRight * Mathf.Sign(newSpeedX));
+             if (newSpeedX == 0) direction = playerRight; // Default
+
+             if (Vector2.Dot(direction, slopeNormalPerp) < 0)
+             {
+                 slopeNormalPerp = -slopeNormalPerp;
+             }
+             
+             // Compensate for slope angle to maintain horizontal speed
+             float slopeFactor = 1f;
+             // slopeNormalPerp.x is the cosine of the angle with the horizontal (if using local right)
+             // Check dot product with playerRight to get the horizontal component magnitude
+             float horizontalComponent = Mathf.Abs(Vector2.Dot(slopeNormalPerp, playerRight));
+             
+             if (horizontalComponent > 0.1f)
+             {
+                 slopeFactor = 1f / horizontalComponent;
+             }
+             
+             // Clamp to prevent excessive speed on very steep slopes/vertical stairs
+             // 3f allows for slopes up to ~70 degrees to maintain full horizontal speed
+             slopeFactor = Mathf.Clamp(slopeFactor, 1f, 3f);
+
+             // Apply Velocity aligned with Slope
+             Vector2 slopeVelocity = slopeNormalPerp * Mathf.Abs(newSpeedX) * slopeFactor;
+             rb.linearVelocity = slopeVelocity;
+             
+             // Debug
+             Debug.DrawRay(transform.position, slopeVelocity, Color.green);
+             return;
+        }
+
+        // 4. Normal / Air Movement
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation; // Ensure loose constraints
+        
         float velY = Vector2.Dot(currentVelocity, playerUp); 
+        
+        // PREVENT SLOPE LAUNCH:
+        // If we are grounded (flat ground or transition) and not jumping, 
+        // kill any residual upward momentum from slopes/stairs.
+        if (isGrounded && slopeLockoutTimer <= 0 && velY > 0)
+        {
+            velY = 0;
+        }
 
-        Vector2 newVelocity = (playerRight * moveInput.x * moveSpeed) + (playerUp * velY);
+        // Variable Gravity Logic (Local Space)
+        if(velY > 0.1f)
+        {
+            rb.gravityScale = defaultGravityScale * upwardMovementMultiplier;
+        }
+        else if(velY < -0.1f)
+        {
+            rb.gravityScale = defaultGravityScale * downwardMovementMultiplier;
+        }
+        else
+        {
+            rb.gravityScale = defaultGravityScale;
+        }
+
+        Vector2 newVelocity = (playerRight * newSpeedX) + (playerUp * velY);
 
         rb.linearVelocity = newVelocity;
     }
 
+    private float defaultGravityScale = 3f; // Cache this in Awake
+
     void Jump()
     {
+        // Unlock constraints before applying force
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        
         Vector2 playerUp = transform.up;
         Vector2 playerRight = transform.right;
         
@@ -367,6 +556,7 @@ public class PlayerController : MonoBehaviour
         
         transform.position += (Vector3)playerUp * 0.05f;
         isGrounded = false;
+        slopeLockoutTimer = 0.2f; // Disable slope snapping for 0.2s
     }
 
     IEnumerator ThunderclapAndFlash(Vector2 dashDir)

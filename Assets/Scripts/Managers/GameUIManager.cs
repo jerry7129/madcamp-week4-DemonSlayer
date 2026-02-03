@@ -18,11 +18,31 @@ public class GameUIManager : MonoBehaviour
     void Start()
     {
         if (playerController == null)
-            playerController = FindAnyObjectByType<PlayerController>();
+        {
+            // Prioritize object with "Player" tag
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj) 
+            {
+                playerController = playerObj.GetComponent<PlayerController>();
+            }
+            
+            // Fallback
+            // Fallback
+            if (playerController == null)
+            {
+                playerController = FindAnyObjectByType<PlayerController>();
+            }
+        }
 
         // Init Health Color
         if (healthFillImage && healthColorGradient != null)
             healthFillImage.color = healthColorGradient.Evaluate(1f);
+            
+        // Auto-Find Slider if missing
+        if (healthSlider == null)
+        {
+            healthSlider = GetComponentInChildren<Slider>();
+        }
     }
 
     void Update()
@@ -32,7 +52,10 @@ public class GameUIManager : MonoBehaviour
 
     public void UpdateHealthBar(float ratio)
     {
-        if (healthSlider) healthSlider.value = ratio;
+        if (healthSlider) 
+        {
+            healthSlider.value = ratio;
+        }
         
         if (healthFillImage && healthColorGradient != null)
         {
