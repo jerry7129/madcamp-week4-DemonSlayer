@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     public GameObject normalAttackCollider;
     public int normalAttackDamage = 25;
     public int thunderclapDamage = 50; // New: Higher damage for Skill
-    public float attackDelay = 0.1f; 
+    public float attackDelay = 0.05f; // Faster hitbox 
     public float attackDuration = 0.3f;
     private bool isAttacking = false; 
 
@@ -475,10 +475,20 @@ public class PlayerController : MonoBehaviour
         
         // 2. Calculate Target Speed & Acceleration
         float targetSpeedX = moveInput.x * moveSpeed;
-        float acceleration = isGrounded ? maxAcceleration : maxAirAcceleration;
-        float maxSpeedChange = acceleration * Time.deltaTime;
+        float newSpeedX;
         
-        float newSpeedX = Mathf.MoveTowards(currentSpeedX, targetSpeedX, maxSpeedChange);
+        // MOMENTUM PRESERVATION (Air Attack)
+        if (isAttacking && !isGrounded)
+        {
+            newSpeedX = currentSpeedX; // Preserve momentum
+        }
+        else
+        {
+            float acceleration = isGrounded ? maxAcceleration : maxAirAcceleration;
+            float maxSpeedChange = acceleration * Time.deltaTime;
+        
+            newSpeedX = Mathf.MoveTowards(currentSpeedX, targetSpeedX, maxSpeedChange);
+        }
 
         // STAIRS/WALL CHECK (Forward Probe)
         // If we are grounded and moving, check for stairs in front
@@ -825,9 +835,14 @@ public class PlayerController : MonoBehaviour
     {
         isAttacking = true;
         
-        // Stop Movement
-        rb.linearVelocity = Vector2.zero;
-        moveInput = Vector2.zero;
+        isAttacking = true;
+        
+        // Stop Movement ONLY if Grounded (DISABLED: Requested Sliding/Inertia on Ground too)
+        // if (isGrounded)
+        // {
+        //     rb.linearVelocity = Vector2.zero;
+        //     moveInput = Vector2.zero;
+        // }
 
         // Visuals
         if (animator) animator.SetTrigger("Attack");
