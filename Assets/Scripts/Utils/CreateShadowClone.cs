@@ -4,7 +4,7 @@ using UnityEditor;
 
 public class CreateShadowClone : MonoBehaviour
 {
-    [MenuItem("Tools/Create Shadow Clone (From Player)")]
+    [MenuItem("Tools/Create Kaigaku")]
     public static void CreateClone()
     {
         // 1. Find Zenitsu Position
