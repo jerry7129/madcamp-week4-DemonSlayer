@@ -1764,7 +1764,7 @@ Transform:
   m_GameObject: {fileID: 629423035}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 163.1, y: 124.5, z: 0}
+  m_LocalPosition: {x: 163.1, y: -1.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -17970,6 +17970,10 @@ MonoBehaviour:
   parallaxEffect: {x: 0.6, y: 0.6}
   infiniteHorizontal: 1
   infiniteVertical: 1
+  cloneGridRadiusX: 1
+  cloneGridRadiusY: 1
+  cloneGap: {x: -0.05, y: -0.05}
+  autoScrollSpeed: {x: 0, y: 0}
 --- !u!212 &1065526401
 SpriteRenderer:
   serializedVersion: 2
@@ -18153,6 +18157,10 @@ MonoBehaviour:
   parallaxEffect: {x: 1, y: 1}
   infiniteHorizontal: 1
   infiniteVertical: 1
+  cloneGridRadiusX: 1
+  cloneGridRadiusY: 1
+  cloneGap: {x: -0.05, y: -0.05}
+  autoScrollSpeed: {x: 0, y: 0}
 --- !u!212 &1094995566
 SpriteRenderer:
   serializedVersion: 2
@@ -18200,7 +18208,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -5
+  m_SortingOrder: -20
   m_MaskInteraction: 0
   m_Sprite: {fileID: 2681379848910448079, guid: 7eabb3e8acd23404e83a419a4c65f167, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -18221,7 +18229,7 @@ Transform:
   m_GameObject: {fileID: 1094995563}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18376,7 +18384,7 @@ Transform:
   m_GameObject: {fileID: 1128450939}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -204.89577, y: -141.19102, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18395,8 +18403,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ParallaxLayer
   parallaxEffect: {x: 0.6, y: 0.6}
-  infiniteHorizontal: 0
-  infiniteVertical: 0
+  infiniteHorizontal: 1
+  infiniteVertical: 1
+  cloneGridRadiusX: 1
+  cloneGridRadiusY: 1
+  cloneGap: {x: -0.05, y: -0.05}
+  autoScrollSpeed: {x: 0, y: 0}
 --- !u!212 &1128450942
 SpriteRenderer:
   serializedVersion: 2
@@ -18444,7 +18456,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -10
   m_MaskInteraction: 0
   m_Sprite: {fileID: -5006531217111041513, guid: 034ffd6c11123fc41a391623eefaaf45, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -19074,7 +19086,7 @@ Transform:
   m_GameObject: {fileID: 1374332294}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 204.89577, y: 141.19102, z: 0}
+  m_LocalPosition: {x: 242.6, y: 12.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -20014,6 +20026,10 @@ MonoBehaviour:
   parallaxEffect: {x: 1, y: 1}
   infiniteHorizontal: 1
   infiniteVertical: 1
+  cloneGridRadiusX: 1
+  cloneGridRadiusY: 1
+  cloneGap: {x: -0.05, y: -0.05}
+  autoScrollSpeed: {x: 0, y: 0}
 --- !u!212 &1699130086
 SpriteRenderer:
   serializedVersion: 2
@@ -20404,6 +20420,10 @@ MonoBehaviour:
   parallaxEffect: {x: 0.2, y: 0.2}
   infiniteHorizontal: 1
   infiniteVertical: 1
+  cloneGridRadiusX: 1
+  cloneGridRadiusY: 1
+  cloneGap: {x: -0.05, y: -0.05}
+  autoScrollSpeed: {x: 0, y: 0}
 --- !u!212 &1802652646
 SpriteRenderer:
   serializedVersion: 2

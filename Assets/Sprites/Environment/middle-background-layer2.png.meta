@@ -67,7 +67,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -81,7 +81,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -133,12 +133,12 @@ TextureImporter:
       name: middle-background-layer2_0
       rect:
         serializedVersion: 2
-        x: 249
-        y: 655
-        width: 262
-        height: 173
+        x: 0
+        y: 0
+        width: 1536
+        height: 1024
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -151,231 +151,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: middle-background-layer2_1
-      rect:
-        serializedVersion: 2
-        x: 510
-        y: 827
-        width: 256
-        height: 117
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7f3d84599e706bfa0800000000000000
-      internalID: -5785427971497470985
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: middle-background-layer2_2
-      rect:
-        serializedVersion: 2
-        x: 1029
-        y: 810
-        width: 260
-        height: 138
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 8746181c63fffa9f0800000000000000
-      internalID: -454864426701331336
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: middle-background-layer2_3
-      rect:
-        serializedVersion: 2
-        x: 758
-        y: 511
-        width: 271
-        height: 153
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 98bf08e7676622770800000000000000
-      internalID: 8584536498836142985
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: middle-background-layer2_4
-      rect:
-        serializedVersion: 2
-        x: 1281
-        y: 663
-        width: 255
-        height: 141
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b6aadf5105ee56980800000000000000
-      internalID: -8546162690131907989
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: middle-background-layer2_5
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 411
-        width: 249
-        height: 103
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: eb8821dd9c3fbc9c0800000000000000
-      internalID: -3905760203490817858
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: middle-background-layer2_6
-      rect:
-        serializedVersion: 2
-        x: 1024
-        y: 407
-        width: 245
-        height: 97
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a464a46bbb7865c80800000000000000
-      internalID: -8334324820115569078
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: middle-background-layer2_7
-      rect:
-        serializedVersion: 2
-        x: 504
-        y: 287
-        width: 253
-        height: 105
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a8c009273cb1ccbd0800000000000000
-      internalID: -2608679557899744118
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: middle-background-layer2_8
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 249
-        height: 271
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c9fb26494716b5c40800000000000000
-      internalID: 5502098523096792988
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: middle-background-layer2_9
-      rect:
-        serializedVersion: 2
-        x: 760
-        y: 144
-        width: 265
-        height: 128
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 67d80069346321e30800000000000000
-      internalID: 4472697043839651190
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: middle-background-layer2_10
-      rect:
-        serializedVersion: 2
-        x: 1264
-        y: 0
-        width: 272
-        height: 156
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f3250c13936112d50800000000000000
-      internalID: 6710669354662384191
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 3cfc87bd301ca5f4b92efa6fd097a956
     internalID: 0
     vertices: []
     indices: 
@@ -383,19 +163,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":1536.0,"y":1024.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       middle-background-layer2_0: -5006531217111041513
-      middle-background-layer2_1: -5785427971497470985
-      middle-background-layer2_10: 6710669354662384191
-      middle-background-layer2_2: -454864426701331336
-      middle-background-layer2_3: 8584536498836142985
-      middle-background-layer2_4: -8546162690131907989
-      middle-background-layer2_5: -3905760203490817858
-      middle-background-layer2_6: -8334324820115569078
-      middle-background-layer2_7: -2608679557899744118
-      middle-background-layer2_8: 5502098523096792988
-      middle-background-layer2_9: 4472697043839651190
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
