@@ -227,7 +227,7 @@ public class GravityBoundEnemyAI : MonoBehaviour
             }
         }
 
-        bool appliedSlopeMove = false;
+        // bool appliedSlopeMove = false; // Unused
 
         if (isOnSlope)
         {
@@ -257,7 +257,7 @@ public class GravityBoundEnemyAI : MonoBehaviour
              else
              {
                  rb.linearVelocity = slopeVel;
-                 appliedSlopeMove = true;
+                 // appliedSlopeMove = true; // Unused
                  return; // Successfully moved on slope, SKIP Gravity
              }
         }

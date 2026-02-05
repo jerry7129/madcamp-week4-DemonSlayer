@@ -18,9 +18,9 @@ public class EnemyHealth : MonoBehaviour
         if (spriteRenderer != null) originalColor = spriteRenderer.color;
     }
 
-    // Invincibility Logic
-    private bool isInvincible = false;
-    public float invincibilityDuration = 0.2f;
+    // Invincibility Logic (Unused for now)
+    // private bool isInvincible = false;
+    // public float invincibilityDuration = 0.2f;
 
     // Triggered when Player's Attack Collider (Trigger) touches this Enemy (Trigger usually)
     void OnTriggerEnter2D(Collider2D other)
@@ -28,12 +28,14 @@ public class EnemyHealth : MonoBehaviour
         // Removed passive check. Damage is now handled by DamageDealer.cs
     }
 
+    /*
     System.Collections.IEnumerator InvincibilityRoutine()
     {
         isInvincible = true;
         yield return new WaitForSeconds(invincibilityDuration);
         isInvincible = false;
     }
+    */
 
     public void TakeDamage(int damage)
     {
