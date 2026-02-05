@@ -18,9 +18,9 @@ public class EnemyHealth : MonoBehaviour
         if (spriteRenderer != null) originalColor = spriteRenderer.color;
     }
 
-    // Invincibility Logic
-    private bool isInvincible = false;
-    public float invincibilityDuration = 0.2f;
+    // Invincibility Logic (Unused for now)
+    // private bool isInvincible = false;
+    // public float invincibilityDuration = 0.2f;
 
     // Events for UI
     public System.Action<float> OnHealthChanged;
@@ -31,12 +31,14 @@ public class EnemyHealth : MonoBehaviour
         // Removed passive check. Damage is now handled by DamageDealer.cs
     }
 
+    /*
     System.Collections.IEnumerator InvincibilityRoutine()
     {
         isInvincible = true;
         yield return new WaitForSeconds(invincibilityDuration);
         isInvincible = false;
     }
+    */
 
     public void TakeDamage(int damage)
     {

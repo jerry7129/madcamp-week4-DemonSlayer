@@ -10,7 +10,7 @@ public class BackgroundGroup : MonoBehaviour
 
     private List<SpriteRenderer> sprites = new List<SpriteRenderer>();
     private Coroutine fadeRoutine;
-    private float targetAlpha = 1f;
+    // private float targetAlpha = 1f; // Unused
 
     void Start()
     {
