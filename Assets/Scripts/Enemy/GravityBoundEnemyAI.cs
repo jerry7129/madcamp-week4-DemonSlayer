@@ -30,6 +30,9 @@ public class GravityBoundEnemyAI : MonoBehaviour
     public GameObject attackHitbox;
     public Transform groundCheck;
     public LayerMask groundLayer;
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip attackClip;
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
@@ -318,6 +321,8 @@ public class GravityBoundEnemyAI : MonoBehaviour
             animator.SetBool("isRunning", false);
             animator.SetTrigger("Attack");
         }
+
+        if (audioSource && attackClip) audioSource.PlayOneShot(attackClip);
         
         yield return new WaitForSeconds(0.1f);
         if (attackHitbox)

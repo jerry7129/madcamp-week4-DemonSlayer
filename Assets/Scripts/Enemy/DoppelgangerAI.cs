@@ -26,6 +26,10 @@ public class DoppelgangerAI : MonoBehaviour
     public GameObject attackHitbox; // Child NormalAttackCollider
     public Transform groundCheck;
     public LayerMask groundLayer;
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip attackClip;
+    public AudioClip skillClip;
 
     // State
     private bool isDead = false;
@@ -381,6 +385,9 @@ public class DoppelgangerAI : MonoBehaviour
             // Fire Projectiles
             if (swordProjectilePrefab != null)
             {
+                // Play Skill Sound ONCE at start
+                if (audioSource && skillClip) audioSource.PlayOneShot(skillClip);
+
                 for (int i = 0; i < projectilesPerAttack; i++)
                 {
                     if (animator) 
@@ -402,6 +409,9 @@ public class DoppelgangerAI : MonoBehaviour
             // --- NORMAL ATTACK (Melee) ---
             lastAttackTime = Time.time;
             if(animator) animator.SetTrigger("Attack");
+
+            // Play Normal Attack Sound
+            if (audioSource && attackClip) audioSource.PlayOneShot(attackClip);
 
             yield return new WaitForSeconds(0.1f); // Windup
 

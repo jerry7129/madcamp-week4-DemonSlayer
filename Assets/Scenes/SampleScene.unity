@@ -635,71 +635,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
---- !u!1001 &910769932
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 8083463603904833146, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_Name
-      value: Kaigaku
-      objectReference: {fileID: 0}
-    - target: {fileID: 8262925043125745084, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.16
-      objectReference: {fileID: 0}
-    - target: {fileID: 8262925043125745084, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149819894068520823, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.1846876
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149819894068520823, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -2.9956684
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149819894068520823, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149819894068520823, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149819894068520823, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149819894068520823, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149819894068520823, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149819894068520823, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149819894068520823, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149819894068520823, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5f671184b3b111448ad08cc01e6c9e1d, type: 3}
 --- !u!1 &986391813
 GameObject:
   m_ObjectHideFlags: 0
@@ -732,6 +667,10 @@ MonoBehaviour:
   minTime: 5
   maxTime: 15
   biwaSound: {fileID: 8300000, guid: 0685c552f4ef9d84aa8709f9ad8e8672, type: 3}
+  allowDown: 1
+  allowUp: 1
+  allowLeft: 1
+  allowRight: 1
   playerTransform: {fileID: 0}
   cameraTransform: {fileID: 0}
 --- !u!4 &986391815
@@ -951,4 +890,3 @@ SceneRoots:
   - {fileID: 1544133617}
   - {fileID: 104620802}
   - {fileID: 590883886}
-  - {fileID: 910769932}

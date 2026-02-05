@@ -21,6 +21,11 @@ public class PlayerController : MonoBehaviour
     public GameObject attackCollider; 
 
     [Header("Combat")]
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip attackClip;
+    public AudioClip dashClip;
+    
     public GameObject normalAttackCollider;
     public int normalAttackDamage = 25;
     public int thunderclapDamage = 50; // New: Higher damage for Skill
@@ -730,6 +735,8 @@ public class PlayerController : MonoBehaviour
             dashParticle.Play();
         }
 
+        if (audioSource && dashClip) audioSource.PlayOneShot(dashClip);
+
         float elapsedTime = 0f;
         
         while (elapsedTime < dashDuration)
@@ -847,6 +854,9 @@ public class PlayerController : MonoBehaviour
 
         // Visuals
         if (animator) animator.SetTrigger("Attack");
+
+        // Play Sound
+        if (audioSource && attackClip) audioSource.PlayOneShot(attackClip);
 
         // Wait for animation impact frame
         yield return new WaitForSeconds(attackDelay);
