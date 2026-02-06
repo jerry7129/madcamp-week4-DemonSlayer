@@ -18,6 +18,7 @@ public class GameUIManager : MonoBehaviour
     [Header("Game Panels")]
     public GameObject gameOverPanel;
     public GameObject gameClearPanel; // NEW
+    public GameObject bossHUD; // NEW
 
     [Header("References")]
     public PlayerController playerController;
@@ -61,6 +62,12 @@ public class GameUIManager : MonoBehaviour
         if (healthSlider == null)
         {
             healthSlider = GetComponentInChildren<Slider>();
+        }
+
+        // Auto-Find BossHUD if missing
+        if (bossHUD == null)
+        {
+            bossHUD = GameObject.Find("BossHUD");
         }
 
         // Ensure Panels are hidden on start
@@ -111,6 +118,17 @@ public class GameUIManager : MonoBehaviour
         {
             gameClearPanel.SetActive(true);
             Time.timeScale = 0f; // Pause game? Optional.
+            
+            // Hide HUD
+            if (healthSlider) healthSlider.gameObject.SetActive(false);
+            
+            if (dashCooldownImage && dashCooldownImage.transform.parent)
+            {
+                dashCooldownImage.transform.parent.gameObject.SetActive(false);
+            }
+
+            // Hide BossHUD
+            if (bossHUD) bossHUD.SetActive(false);
         }
     }
 

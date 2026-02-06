@@ -362,7 +362,7 @@ MonoBehaviour:
   maxAirAcceleration: 20
   downwardMovementMultiplier: 3
   upwardMovementMultiplier: 1.7
-  jumpHeight: 3
+  jumpHeight: 6
   jumpCooldown: 0.2
   target: {fileID: 0}
   animator: {fileID: 0}

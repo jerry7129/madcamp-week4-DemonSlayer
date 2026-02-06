@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // Added
 
 public class MainMenuAudioManager : MonoBehaviour
 {
@@ -24,6 +25,24 @@ public class MainMenuAudioManager : MonoBehaviour
         {
             Destroy(gameObject);
             return;
+        }
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "MainMenu")
+        {
+             if (menuBGM != null) PlayMusic(menuBGM);
         }
     }
 
